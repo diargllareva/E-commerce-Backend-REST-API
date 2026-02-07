@@ -1,0 +1,304 @@
+1) What this file is
+
+This is a controller module for an Express + MongoDB (Mongoose) backend.
+It defines two async route handler functions:
+
+registerUser(req, res) → creates a new user (sign up)
+
+loginUser(req, res) → verifies credentials (sign in)
+
+At the end it exports them so you can attach them to routes like:
+
+router.post("/register", registerUser);
+router.post("/login", loginUser);
+
+2) Imports (top of file)
+const express = require("express");
+const User = require("../models/User");
+const bcrypt = require("bcryptjs");
+
+express
+
+You import Express, but you don’t actually use it in this file.
+
+Usually controllers don’t need express directly because they only use req and res passed in by Express.
+
+✅ You can remove it safely unless you plan to use it later.
+
+User
+
+This is your Mongoose model.
+
+It represents a MongoDB collection (likely users) and gives you functions like:
+
+User.findOne(...)
+
+User.create(...)
+
+bcryptjs
+
+Used for password security.
+
+Key functions you use:
+
+bcrypt.hash(password, saltRounds) → convert plain password into a secure hash
+
+bcrypt.compare(plain, hashed) → check if plain password matches stored hash
+
+3) registerUser(req, res) detailed flow
+3.1 Try/catch wrapper
+async function registerUser (req, res) {
+  try {
+    ...
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+}
+
+
+Since you use await (async DB + hashing), errors can happen.
+
+try/catch ensures the server replies instead of crashing.
+
+3.2 Read request body
+const name = req.body.name
+const email = req.body.email
+const password = req.body.password
+
+
+This assumes the client sends JSON like:
+
+{
+  "name": "Ali",
+  "email": "ali@example.com",
+  "password": "secret123"
+}
+
+
+⚠️ If you don’t have app.use(express.json()) in your server setup, req.body will be undefined.
+
+3.3 Validation (Name)
+switch(true) {
+  case name === "":
+    res.status(400).json({ error: "Name is requried"});    
+    return;
+}
+
+
+This is a pattern some people use to simulate “if/else” chains:
+
+switch(true) means: each case is a boolean expression.
+
+When one case becomes true, it runs that block.
+
+So here: if name is an empty string "", respond with HTTP 400 Bad Request.
+
+⚠️ Problems with this validation:
+
+If name is undefined or null, name === "" is false, so it won’t catch missing name.
+
+A user could send " " (spaces) and it will pass.
+
+Better checks usually look like:
+
+if (!name || !name.trim()) ...
+
+3.4 Validation (Email)
+switch(true) {
+  case email === "":
+    res.status(400).json({ error: "Email is requried"});
+    return;
+
+  case !email.includes("@"):
+    res.status(400).json({ error: "Email must contain @"});
+    return;
+}
+
+
+Meaning:
+
+if email is empty string → error
+
+else if it does not contain @ → error
+
+⚠️ Similar issues:
+
+If email is undefined, calling email.includes("@") would throw an error.
+
+Checking only @ is very weak validation (but maybe OK for learning).
+
+3.5 Validation (Password)
+switch(true) {
+  case password === "": 
+    res.status(400).json({ error: "Password is requried"});
+    return;
+
+  case password.length < 6:
+    res.status(400).json({ error: "Minimum 6 characters"});
+    return;
+}
+
+
+Meaning:
+
+Empty password → error
+
+Password shorter than 6 chars → error
+
+⚠️ If password is undefined, password.length will crash.
+
+3.6 Check if user already exists
+const existUser = await User.findOne({ email : email })
+
+if(existUser) {
+  res.status(400).json({ error: "User already exist!"})
+  return;
+}
+
+
+User.findOne({ email: email }) queries MongoDB for a document with this email.
+
+If found, you block registration.
+
+Note: email: email can be shortened to { email }.
+
+3.7 Hashing the password
+const hashed = await bcrypt.hash(password, 10);
+
+
+This generates a hash using 10 salt rounds.
+
+Higher number = more secure but slower.
+
+What’s stored in DB is not password, it’s a hash like:
+$2a$10$...
+
+3.8 Create user in MongoDB
+const newUser = await User.create({
+  name: name,
+  email: email,
+  password: hashed,
+})
+
+
+Creates and saves a document in one step.
+
+newUser contains the created MongoDB record.
+
+⚠️ You are not using newUser afterwards. (Not wrong, just unused.)
+
+3.9 Response
+res.status(200).json({ message: "Register endpoint works" });
+
+
+Sends HTTP 200 with a message.
+
+Usually registration returns:
+
+created user info (without password)
+
+or a token (JWT)
+
+and typically status 201 Created instead of 200.
+
+4) loginUser(req, res) detailed flow
+4.1 Read request body using destructuring
+const { email, password } = req.body;
+
+
+Equivalent to:
+
+const email = req.body.email;
+const password = req.body.password;
+
+4.2 Find user by email
+const user = await User.findOne({ email });
+if (!user) {
+  return res.status(400).json({ error: "Invalid email or password" });
+}
+
+
+If user doesn’t exist, respond with a generic message.
+✅ This is good security practice: don’t reveal whether email exists.
+
+4.3 Compare password with stored hash
+const isMatch = await bcrypt.compare(password, user.password);
+if (!isMatch) {
+  return res.status(400).json({ error: "Invalid email or password" });
+}
+
+
+bcrypt.compare() hashes the input password internally and checks if it matches user.password.
+
+4.4 Success response
+res.status(200).json({
+  message: "Login successful",
+  user: {
+    id: user._id,
+    name: user.name,
+    email: user.email
+  }
+});
+
+
+Returns some user info.
+✅ You correctly do not return the password.
+
+⚠️ In real apps, login usually returns a token (JWT/session) so the client can stay authenticated.
+
+5) Exporting functions
+module.exports = {
+  registerUser,
+  loginUser,
+}
+
+
+So other files can do:
+
+const
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cart → comes from MongoDB
+
+items[] → array in your schema
+
+items[i]._id → auto-generated by Mongoose
+
+product → populated Product document
+
+quantity → your number field
+
+
+
+
+
+
+
+cart → the user’s cart document
+
+cart.items → array of cart items
+
+item → one cart item
+
+item.product → product ObjectId
+
+productId → product ID string from request

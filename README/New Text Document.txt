@@ -1,0 +1,201 @@
+PROJECT ROADMAP (you’ll build all of this)
+1️⃣ User System
+
+✔ Register
+✔ Login
+✔ JWT token
+✔ Authentication middleware
+✔ Role system (user/admin)
+
+2️⃣ Product System
+
+✔ Create products (admin only)
+✔ Get all products
+✔ Get one product
+✔ Update product
+✔ Delete product
+
+3️⃣ Cart System
+
+✔ Add items to cart
+✔ Remove items
+✔ Update quantity
+✔ Clear cart
+
+4️⃣ Order System
+
+✔ Checkout
+✔ Order history
+✔ Order details
+✔ Auto stock reduction
+
+5️⃣ Real-Time Notifications
+
+✔ Socket.io
+✔ Notify admin: "New order placed"
+✔ Notify user: "Order shipped"
+
+
+
+
+
+
+Express:
+
+Method	          Express	         Purpose
+
+GET	              app.get()	         Read data
+POST	          app.post()	     Create data
+PUT	              app.put()	         Replace data
+PATCH	          app.patch()	     Update part of data
+DELETE	          app.delete()	     Remove data
+
+
+Client  →  METHOD + URL  →  Server
+Server  →  JSON response →  Client
+
+
+
+                                        1. WHAT IS AN API?
+
+An API is just:
+
+A list of rules that say
+“If someone sends a request to THIS URL with THIS method → run THIS code”
+
+
+
+
+                                        2.HTTP METHODS (CRUCIAL)
+                                        
+Method	                    Meaning	                Example
+
+GET                     	Read data	            Get all users
+POST	                    Create data	            Register user
+PUT / PATCH	                Update data	            Update profile
+DELETE	                    Delete data	            Delete user
+
+
+
+
+
+
+
+1️⃣ server.js — The entry point (the boss)
+
+Role: Starts the app and connects everything.
+What it does conceptually:
+Creates the Express app
+Connects to MongoDB
+Registers middleware
+Attaches routes to URLs
+Starts listening on a port
+
+Think of it as:
+“When a request comes in, I know where to send it.”
+It does NOT contain business logic.
+
+
+2️⃣ routes/authRoutes.js — The traffic controller
+
+Role: Maps URLs + HTTP methods → controller functions
+Example in plain English:
+POST /api/auth/register → call registerUser
+
+
+Routes:
+
+Do NOT contain logic
+Do NOT talk to the database
+Only forward the request
+
+Think of routes as:
+“If someone knocks on this door, send them to that function.”
+
+
+
+
+3️⃣ controllers/authController.js — ✅ YES: this is the logic
+
+Role: Handles the actual work
+
+This is where:
+
+You read req.body
+You validate input
+You talk to the database
+You decide success or error
+You send responses
+
+Your understanding is correct:
+🔥 Controllers contain the business logic
+
+Example responsibilities:
+
+Is name empty?
+Is email valid?
+Save user
+Return response
+
+
+
+
+4️⃣ models/User.js — The database blueprint
+
+Role: Defines how data looks in MongoDB
+
+It answers:
+
+What fields does a User have?
+What types?
+What is required?
+What is unique?
+
+Models:
+
+Do NOT handle requests
+Do NOT send responses
+Only describe data structure
+
+Think of it as:
+“This is what a User looks like in the database.”
+
+
+
+
+
+5️⃣ Middleware (conceptually)
+
+Role: Code that runs before controllers
+
+Examples:
+
+express.json() → parses JSON
+Auth middleware → checks login
+Logging middleware → logs requests
+
+Middleware:
+
+Can stop the request
+Can modify req
+Runs before controller logic
+
+
+
+Client (Thunder)
+   ↓
+server.js
+   ↓
+routes (authRoutes.js)
+   ↓
+controller (authController.js)
+   ↓
+model (User.js)
+   ↓
+MongoDB
+
+
+
+Building a full REST API using Express.js for an e-commerce system is one of the best challenges you can take on — and you are 100% ready for it now.
+
+This project will teach you real backend development, exactly how professional developers build APIs used by websites, mobile apps, and dashboards.
