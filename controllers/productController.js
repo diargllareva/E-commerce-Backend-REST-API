@@ -77,7 +77,7 @@ async function deleteProduct (req, res) {
         productID
     )
 
-    if(!deleteProduct){
+    if(!deletedProduct){
         return res.status(404).json({ error: "Product not found" });
     }
     
@@ -86,7 +86,7 @@ async function deleteProduct (req, res) {
         product: deletedProduct.name,
     });
 
-    }catch (erorr) {
+    }catch (error) {
         console.error(error);
         res.status(500).json({ error: "Server Error" })
     }
