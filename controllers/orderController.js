@@ -66,7 +66,7 @@ async function createOrderFromCart(req, res) {
     await order.save();
 
     // 6. Clear cart
-    cart.items = cart.items.filter(item => item.product !== null);
+    cart.items = [];
     await cart.save();
 
     // 7. Respond
