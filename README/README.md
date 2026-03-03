@@ -126,8 +126,8 @@ GET /api/orders
 
 ⚙️ Installation & Setup
 1️⃣ Clone the Repository
-git clone https://github.com/diargllareva/ecommerce-api.git
-cd ecommerce-api
+git clone https://github.com/diargllareva/E-commerce-Backend-REST-API.git
+cd E-commerce-Backend-REST-API
 2️⃣ Install Dependencies
 npm install
 3️⃣ Create .env File
