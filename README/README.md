@@ -1,201 +1,175 @@
-PROJECT ROADMAP (you’ll build all of this)
-1️⃣ User System
+🛒 E-Commerce REST API
+📌 Overview
 
-✔ Register
-✔ Login
-✔ JWT token
-✔ Authentication middleware
-✔ Role system (user/admin)
+This project is a RESTful E-Commerce Backend API built using Node.js, Express, and MongoDB.
 
-2️⃣ Product System
+It provides secure authentication, role-based access control, product management, cart functionality, and order processing. The system follows clean architecture principles and REST API best practices.
 
-✔ Create products (admin only)
-✔ Get all products
-✔ Get one product
-✔ Update product
-✔ Delete product
+The goal of this project was to design and implement a secure, scalable, and maintainable backend system.
 
-3️⃣ Cart System
+🛠️ Tech Stack
 
-✔ Add items to cart
-✔ Remove items
-✔ Update quantity
-✔ Clear cart
+Node.js
 
-4️⃣ Order System
+Express.js
 
-✔ Checkout
-✔ Order history
-✔ Order details
-✔ Auto stock reduction
-
-5️⃣ Real-Time Notifications
-
-✔ Socket.io
-✔ Notify admin: "New order placed"
-✔ Notify user: "Order shipped"
-
-
-
-
-
-
-Express:
-
-Method	          Express	         Purpose
-
-GET	              app.get()	         Read data
-POST	          app.post()	     Create data
-PUT	              app.put()	         Replace data
-PATCH	          app.patch()	     Update part of data
-DELETE	          app.delete()	     Remove data
-
-
-Client  →  METHOD + URL  →  Server
-Server  →  JSON response →  Client
-
-
-
-                                        1. WHAT IS AN API?
-
-An API is just:
-
-A list of rules that say
-“If someone sends a request to THIS URL with THIS method → run THIS code”
-
-
-
-
-                                        2.HTTP METHODS (CRUCIAL)
-                                        
-Method	                    Meaning	                Example
-
-GET                     	Read data	            Get all users
-POST	                    Create data	            Register user
-PUT / PATCH	                Update data	            Update profile
-DELETE	                    Delete data	            Delete user
-
-
-
-
-
-
-
-1️⃣ server.js — The entry point (the boss)
-
-Role: Starts the app and connects everything.
-What it does conceptually:
-Creates the Express app
-Connects to MongoDB
-Registers middleware
-Attaches routes to URLs
-Starts listening on a port
-
-Think of it as:
-“When a request comes in, I know where to send it.”
-It does NOT contain business logic.
-
-
-2️⃣ routes/authRoutes.js — The traffic controller
-
-Role: Maps URLs + HTTP methods → controller functions
-Example in plain English:
-POST /api/auth/register → call registerUser
-
-
-Routes:
-
-Do NOT contain logic
-Do NOT talk to the database
-Only forward the request
-
-Think of routes as:
-“If someone knocks on this door, send them to that function.”
-
-
-
-
-3️⃣ controllers/authController.js — ✅ YES: this is the logic
-
-Role: Handles the actual work
-
-This is where:
-
-You read req.body
-You validate input
-You talk to the database
-You decide success or error
-You send responses
-
-Your understanding is correct:
-🔥 Controllers contain the business logic
-
-Example responsibilities:
-
-Is name empty?
-Is email valid?
-Save user
-Return response
-
-
-
-
-4️⃣ models/User.js — The database blueprint
-
-Role: Defines how data looks in MongoDB
-
-It answers:
-
-What fields does a User have?
-What types?
-What is required?
-What is unique?
-
-Models:
-
-Do NOT handle requests
-Do NOT send responses
-Only describe data structure
-
-Think of it as:
-“This is what a User looks like in the database.”
-
-
-
-
-
-5️⃣ Middleware (conceptually)
-
-Role: Code that runs before controllers
-
-Examples:
-
-express.json() → parses JSON
-Auth middleware → checks login
-Logging middleware → logs requests
-
-Middleware:
-
-Can stop the request
-Can modify req
-Runs before controller logic
-
-
-
-Client (Thunder)
-   ↓
-server.js
-   ↓
-routes (authRoutes.js)
-   ↓
-controller (authController.js)
-   ↓
-model (User.js)
-   ↓
 MongoDB
 
+Mongoose
 
+JWT (JSON Web Token)
 
-Building a full REST API using Express.js for an e-commerce system is one of the best challenges you can take on — and you are 100% ready for it now.
+bcrypt
 
-This project will teach you real backend development, exactly how professional developers build APIs used by websites, mobile apps, and dashboards.
+dotenv
+
+🔐 Authentication & Authorization
+
+User Registration & Login
+
+Password hashing using bcrypt
+
+JWT-based authentication
+
+Protected route middleware
+
+Role-Based Access Control (Admin / User)
+
+✨ Core Features
+👤 User Management
+
+Register new user
+
+Login and receive JWT token
+
+Secure password storage
+
+Role-based permissions
+
+📦 Product Management
+
+Create product (Admin only)
+
+Update product (Admin only)
+
+Delete product (Admin only)
+
+Get all products
+
+Get single product
+
+Stock tracking and validation
+
+🛒 Cart System
+
+Add product to cart
+
+Remove product from cart
+
+Update product quantity
+
+Calculate total cart value
+
+📑 Order System
+
+Create order from cart
+
+Prevent ordering out-of-stock products
+
+Automatically reduce stock after successful order
+
+View user order history
+
+🗂️ Project Structure
+src/
+ ├── controllers/
+ ├── models/
+ ├── routes/
+ ├── middlewares/
+ ├── config/
+ └── server.js
+
+The project is structured in a modular way to ensure scalability, readability, and maintainability.
+
+📡 API Endpoints
+🔑 Auth
+
+POST /api/auth/register
+
+POST /api/auth/login
+
+📦 Products
+
+GET /api/products
+
+GET /api/products/:id
+
+POST /api/products (Admin only)
+
+PUT /api/products/:id (Admin only)
+
+DELETE /api/products/:id (Admin only)
+
+🛒 Cart
+
+POST /api/cart
+
+GET /api/cart
+
+DELETE /api/cart/:productId
+
+📑 Orders
+
+POST /api/orders
+
+GET /api/orders
+
+⚙️ Installation & Setup
+1️⃣ Clone the Repository
+git clone https://github.com/diargllareva/ecommerce-api.git
+cd ecommerce-api
+2️⃣ Install Dependencies
+npm install
+3️⃣ Create .env File
+
+Create a .env file in the root directory:
+
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_secret_key
+4️⃣ Run the Server
+npm run dev
+
+Server runs at:
+
+http://localhost:5000
+🧠 Key Learnings
+
+Designing RESTful APIs
+
+Implementing secure authentication systems
+
+Handling role-based authorization
+
+Managing business logic (cart → order → stock updates)
+
+Structuring scalable backend applications
+
+Working with MongoDB using Mongoose
+
+🚀 Future Improvements
+
+Implement refresh token authentication
+
+Add API documentation using Swagger
+
+Add unit and integration tests (Jest)
+
+Integrate payment gateway
+
+Dockerize the application
+
+👩‍💻 Author
+
+Diar Gllareva
+Backend Developer – Node.js | Express | MongoDB
